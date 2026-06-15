@@ -28,6 +28,13 @@ beforeAll(() => {
       removeListener: vi.fn(),
     })),
   })
+
+  window.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  window.HTMLElement.prototype.scrollIntoView = vi.fn()
 })
 
 afterEach(() => {
@@ -171,6 +178,110 @@ describe("App", () => {
         screen.getByText("YCloud has been duplicated.")
       ).toBeInTheDocument()
     })
+  })
+
+  it("creates an agent with a searchable multi-select for contact attributes", async () => {
+    renderApp()
+
+    fireEvent.click(screen.getByRole("button", { name: "Create Agent" }))
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+    expect(screen.getByText("Create AI Agent")).toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText("Name"), {
+      target: { value: "NewLaunchAgent1" },
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Shop assistant" }))
+
+    fireEvent.click(
+      screen.getByRole("combobox", { name: "Choose contact attributes" })
+    )
+    fireEvent.change(
+      screen.getByPlaceholderText("Search contact attributes..."),
+      { target: { value: "email" } }
+    )
+    fireEvent.click(
+      await screen.findByRole("option", {
+        name: "Shopify Email Marketing Consent Opt In Level",
+      })
+    )
+
+    expect(
+      within(
+        screen.getByRole("combobox", { name: "Choose contact attributes" })
+      ).getByText("Shopify Email Marketing Consent Opt In Level")
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Create" }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+      expect(
+        screen.getByRole("article", { name: "NewLaunchAgent1" })
+      ).toBeInTheDocument()
+    })
+    expect(screen.getByText("Last Updated just now")).toBeInTheDocument()
+  })
+
+  it("validates agent names before submitting the create form", async () => {
+    renderApp()
+
+    fireEvent.click(screen.getByRole("button", { name: "Create Agent" }))
+    fireEvent.change(screen.getByLabelText("Name"), {
+      target: { value: "中文 Agent-1" },
+    })
+    fireEvent.click(screen.getByRole("button", { name: "Create" }))
+
+    expect(
+      await screen.findByText("Use letters and numbers only.")
+    ).toBeInTheDocument()
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+    expect(
+      screen.queryByRole("article", { name: "中文 Agent-1" })
+    ).not.toBeInTheDocument()
+  })
+
+  it("keeps role card icons aligned in fixed icon slots", () => {
+    renderApp()
+
+    fireEvent.click(screen.getByRole("button", { name: "Create Agent" }))
+
+    const roleIconSlots = document.querySelectorAll('[data-slot="role-icon"]')
+    expect(roleIconSlots).toHaveLength(4)
+
+    roleIconSlots.forEach((slot) => {
+      expect(slot).toHaveClass("size-5")
+      expect(slot).toHaveClass("items-center")
+      expect(slot).toHaveClass("justify-center")
+    })
+  })
+
+  it("highlights selected contact attributes and removes them from chips", async () => {
+    renderApp()
+
+    fireEvent.click(screen.getByRole("button", { name: "Create Agent" }))
+
+    fireEvent.click(
+      screen.getByRole("combobox", { name: "Choose contact attributes" })
+    )
+
+    const selectedOption = screen.getByRole("option", {
+      name: "Shopify Last Name",
+    })
+    expect(selectedOption).toHaveAttribute("data-checked", "true")
+    expect(selectedOption).toHaveClass("bg-muted")
+
+    fireEvent.click(
+      within(
+        screen.getByRole("combobox", { name: "Choose contact attributes" })
+      ).getByRole("button", { name: "Remove Shopify Last Name" })
+    )
+
+    expect(
+      within(
+        screen.getByRole("combobox", { name: "Choose contact attributes" })
+      ).queryByText("Shopify Last Name")
+    ).not.toBeInTheDocument()
   })
 
   it("keeps empty agent tabs compact", () => {
