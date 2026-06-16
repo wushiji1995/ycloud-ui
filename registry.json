@@ -1,6 +1,36 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "vite-app",
-  "homepage": "https://github.com/<owner>/<repo>",
-  "items": []
+  "name": "ycloud-ui",
+  "homepage": "https://github.com/wushiji1995/ycloud-ui",
+  "items": [
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "YCloud utils",
+      "description": "Shared utility helpers for YCloud UI components.",
+      "dependencies": ["clsx", "tailwind-merge"],
+      "files": [
+        {
+          "path": "src/lib/utils.ts",
+          "type": "registry:lib",
+          "target": "src/lib/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "YCloud Button",
+      "description": "YCloud button component based on Base UI and class-variance-authority.",
+      "dependencies": ["@base-ui/react", "class-variance-authority"],
+      "registryDependencies": ["wushiji1995/ycloud-ui/utils"],
+      "files": [
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "registry:ui",
+          "target": "src/components/ui/button.tsx"
+        }
+      ]
+    }
+  ]
 }
