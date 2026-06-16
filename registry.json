@@ -8,8 +8,8 @@
       "type": "registry:style",
       "title": "YCloud UI theme",
       "description": "Shared Tailwind CSS 4 layers and YCloud UI design tokens without Tailwind preflight.",
-      "dependencies": ["tailwindcss"],
-      "devDependencies": ["@tailwindcss/postcss"],
+      "dependencies": ["tailwindcss", "tw-animate-css"],
+      "devDependencies": ["@tailwindcss/postcss", "shadcn"],
       "files": [
         {
           "path": "src/styles/ycloud-ui.css",
