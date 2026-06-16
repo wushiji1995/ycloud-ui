@@ -47,7 +47,15 @@ type ButtonProps = ButtonPrimitive.Props &
     startIcon?: ReactNode
   }
 
-function renderIcon(icon: ReactNode, position: "inline-start" | "inline-end") {
+type IconPosition = "inline-start" | "inline-end"
+
+function ButtonIcon({
+  icon,
+  position,
+}: {
+  icon: ReactNode
+  position: IconPosition
+}) {
   if (!icon) {
     return null
   }
@@ -61,11 +69,15 @@ function renderIcon(icon: ReactNode, position: "inline-start" | "inline-end") {
   return <span data-icon={position}>{icon}</span>
 }
 
-function renderStartIcon(
-  startIcon: ReactNode,
-  endIcon: ReactNode,
+function ButtonStartIcon({
+  endIcon,
+  loading,
+  startIcon,
+}: {
+  endIcon: ReactNode
   loading: boolean
-) {
+  startIcon: ReactNode
+}) {
   if (loading) {
     if (endIcon && !startIcon) {
       return null
@@ -74,19 +86,23 @@ function renderStartIcon(
     return <Spinner data-icon="inline-start" />
   }
 
-  return renderIcon(startIcon, "inline-start")
+  return <ButtonIcon icon={startIcon} position="inline-start" />
 }
 
-function renderEndIcon(
-  endIcon: ReactNode,
-  startIcon: ReactNode,
+function ButtonEndIcon({
+  endIcon,
+  loading,
+  startIcon,
+}: {
+  endIcon: ReactNode
   loading: boolean
-) {
+  startIcon: ReactNode
+}) {
   if (loading && endIcon && !startIcon) {
     return <Spinner data-icon="inline-end" />
   }
 
-  return renderIcon(endIcon, "inline-end")
+  return <ButtonIcon icon={endIcon} position="inline-end" />
 }
 
 function Button({
@@ -107,9 +123,17 @@ function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {renderStartIcon(startIcon, endIcon, loading)}
+      <ButtonStartIcon
+        endIcon={endIcon}
+        loading={loading}
+        startIcon={startIcon}
+      />
       {children}
-      {renderEndIcon(endIcon, startIcon, loading)}
+      <ButtonEndIcon
+        endIcon={endIcon}
+        loading={loading}
+        startIcon={startIcon}
+      />
     </ButtonPrimitive>
   )
 }
