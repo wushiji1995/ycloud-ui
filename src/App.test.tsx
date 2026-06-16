@@ -30,7 +30,37 @@ beforeAll(() => {
   })
 
   window.ResizeObserver = class ResizeObserver {
-    observe() {}
+    private callback: ResizeObserverCallback
+
+    constructor(callback: ResizeObserverCallback) {
+      this.callback = callback
+    }
+
+    observe(target: Element) {
+      this.callback(
+        [
+          {
+            target,
+            contentRect: {
+              bottom: 288,
+              height: 288,
+              left: 0,
+              right: 960,
+              top: 0,
+              width: 960,
+              x: 0,
+              y: 0,
+              toJSON: () => ({}),
+            },
+            borderBoxSize: [],
+            contentBoxSize: [],
+            devicePixelContentBoxSize: [],
+          },
+        ],
+        this
+      )
+    }
+
     unobserve() {}
     disconnect() {}
   }
@@ -53,6 +83,14 @@ function renderApp() {
 describe("App", () => {
   it("renders the AI agent management page", () => {
     renderApp()
+
+    const colorBlock = screen.getByText("hello").parentElement
+    expect(colorBlock).toHaveClass("before:from-violet-200")
+    expect(colorBlock).toHaveClass("before:to-purple-500")
+    expect(colorBlock).toHaveClass("bg-purple-500")
+    expect(colorBlock).toHaveClass("before:bg-linear-to-r")
+    expect(colorBlock).toHaveClass("hover:before:opacity-0")
+    expect(colorBlock).toHaveClass("transition-colors")
 
     expect(
       screen.getByRole("heading", { level: 1, name: "AI Agent" })
@@ -96,10 +134,195 @@ describe("App", () => {
 
     const activeTab = screen.getByRole("tab", { selected: true })
     expect(activeTab).toHaveAttribute("data-active")
-    expect(activeTab).toHaveClass(
-      "group-data-[orientation=horizontal]/tabs:after:h-0.5"
+    expect(activeTab).toHaveClass("after:absolute")
+    expect(activeTab).toHaveClass("group-data-horizontal/tabs:after:h-0.5")
+    expect(activeTab).toHaveClass("data-active:text-primary")
+    expect(activeTab).toHaveClass("after:bg-primary")
+  })
+
+  it("renders a deliveries Sankey chart with shadcn chart styling", () => {
+    renderApp()
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Deliveries" })
+    ).toBeInTheDocument()
+    expect(screen.getByText("Sent")).toBeInTheDocument()
+    expect(screen.getByText("1,280")).toBeInTheDocument()
+    expect(screen.getByText("Delivered")).toBeInTheDocument()
+    expect(screen.getByText("1,192")).toBeInTheDocument()
+    expect(screen.getByText("Failed")).toBeInTheDocument()
+    expect(screen.getAllByText("88")[0]).toBeInTheDocument()
+    expect(screen.getByText("Read")).toBeInTheDocument()
+    expect(screen.getByText("826")).toBeInTheDocument()
+    expect(screen.getByText("Clicks")).toBeInTheDocument()
+    expect(screen.getByText("314")).toBeInTheDocument()
+    expect(screen.getByText("Unique replies")).toBeInTheDocument()
+    expect(screen.getByText("182")).toBeInTheDocument()
+    expect(screen.getByTestId("deliveries-sankey-chart")).toHaveAttribute(
+      "data-slot",
+      "chart"
     )
-    expect(activeTab).toHaveClass("after:bg-foreground")
+    expect(screen.getByTestId("deliveries-sankey-link-0")).toHaveAttribute(
+      "stroke",
+      "none"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-0")).toHaveAttribute(
+      "fill"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-4")).toBeInTheDocument()
+    for (const linkIndex of [0, 1, 2, 3, 4]) {
+      expect(
+        screen.getByTestId(`deliveries-sankey-link-${linkIndex}`)
+      ).toHaveAttribute("data-highlighted", "true")
+      expect(
+        screen.getByTestId(`deliveries-sankey-link-${linkIndex}`)
+      ).not.toHaveAttribute("data-dimmed")
+    }
+    expect(
+      document.querySelector('[data-sankey-node="failed"]')
+    ).toBeInTheDocument()
+    expect(screen.getByTestId("deliveries-sankey-chart").textContent).toContain(
+      "Failed"
+    )
+  })
+
+  it("highlights a delivery node and only its connected Sankey links on hover", () => {
+    renderApp()
+
+    const deliveredNode = document.querySelector(
+      '[data-sankey-node="delivered"]'
+    )
+    expect(deliveredNode).toBeInTheDocument()
+
+    fireEvent.mouseEnter(deliveredNode!)
+
+    expect(deliveredNode).toHaveAttribute("data-highlighted", "true")
+    expect(screen.getByTestId("deliveries-sankey-link-0")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-2")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-3")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-4")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-1")).toHaveAttribute(
+      "data-dimmed",
+      "true"
+    )
+
+    fireEvent.mouseLeave(deliveredNode!)
+
+    expect(deliveredNode).not.toHaveAttribute("data-highlighted")
+    expect(screen.getByTestId("deliveries-sankey-link-1")).not.toHaveAttribute(
+      "data-dimmed"
+    )
+  })
+
+  it("highlights the full delivery path when hovering an end node", () => {
+    renderApp()
+
+    const readNode = document.querySelector('[data-sankey-node="read"]')
+    expect(readNode).toBeInTheDocument()
+
+    fireEvent.mouseEnter(readNode!)
+
+    expect(screen.getByTestId("deliveries-sankey-link-0")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-2")).toHaveAttribute(
+      "data-highlighted",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-1")).toHaveAttribute(
+      "data-dimmed",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-3")).toHaveAttribute(
+      "data-dimmed",
+      "true"
+    )
+    expect(screen.getByTestId("deliveries-sankey-link-4")).toHaveAttribute(
+      "data-dimmed",
+      "true"
+    )
+  })
+
+  it("renders a button clicks line chart with summary cards", () => {
+    renderApp()
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Button clicks" })
+    ).toBeInTheDocument()
+    expect(screen.getAllByText("Start free trial")[0]).toBeInTheDocument()
+    expect(screen.getByText("214")).toBeInTheDocument()
+    expect(screen.getByText("68.2% of button clicks")).toBeInTheDocument()
+    expect(screen.getAllByText("View pricing")[0]).toBeInTheDocument()
+    expect(screen.getByText("72")).toBeInTheDocument()
+    expect(screen.getByText("22.9% of button clicks")).toBeInTheDocument()
+    expect(screen.getAllByText("Talk to sales")[0]).toBeInTheDocument()
+    expect(screen.getByText("28")).toBeInTheDocument()
+    expect(screen.getByText("8.9% of button clicks")).toBeInTheDocument()
+    expect(screen.getByTestId("button-clicks-chart")).toHaveAttribute(
+      "data-slot",
+      "chart"
+    )
+  })
+
+  it("renders a failed reason share chart with failed message total", () => {
+    renderApp()
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Failed reason share" })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "Failed reasons are aggregated from real-time message status webhooks and may differ from Meta analytics before sync completes."
+      )
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText("User phone number unrea...")[0]
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText("Template paused by quali...")[0]
+    ).toBeInTheDocument()
+    expect(screen.getByText("Rate limit")).toBeInTheDocument()
+    expect(screen.getByText("Other")).toBeInTheDocument()
+    expect(screen.getByText("42%")).toBeInTheDocument()
+    expect(screen.getByText("Failed messages")).toBeInTheDocument()
+    expect(screen.getAllByText("88")[1]).toBeInTheDocument()
+    expect(screen.getByTestId("failed-reason-chart")).toHaveAttribute(
+      "data-slot",
+      "chart"
+    )
+  })
+
+  it("renders iconfont icons from the imported asset package", () => {
+    renderApp()
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Iconfont icons" })
+    ).toBeInTheDocument()
+    expect(screen.getByText("icon-sohu_1")).toBeInTheDocument()
+    expect(screen.getByText("icon-a-ycloudlogosingle")).toBeInTheDocument()
+    expect(screen.getByText("icon-CRMguanli")).toBeInTheDocument()
+
+    const sohuIcon = screen.getByRole("img", { name: "sohu_1" })
+    expect(sohuIcon).toHaveClass("iconfont")
+    expect(sohuIcon).toHaveClass("icon-sohu_1")
+
+    const ycloudIcon = screen.getByRole("img", {
+      name: "a-ycloudlogosingle",
+    })
+    expect(ycloudIcon).toHaveClass("icon-a-ycloudlogosingle")
   })
 
   it("confirms before deleting an agent", () => {

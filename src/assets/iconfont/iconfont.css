@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "app-iconfont";
+  src: url("./iconfont.ttf?t=1781581975874") format("truetype");
+  font-display: block;
+}
+
+.iconfont {
+  font-family: "app-iconfont" !important;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  display: inline-block;
+  color: currentColor;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-sohu_1:before {
+  content: "\e606";
+}
+
+.icon-soho_1:before {
+  content: "\e601";
+}
+
+.icon-soho_11:before {
+  content: "\e602";
+}
+
+.icon-soho_12:before {
+  content: "\e603";
+}
+
+.icon-soho_13:before {
+  content: "\e605";
+}
+
+.icon-freebuf:before {
+  content: "\e607";
+}
+
+.icon-freebuf_2:before {
+  content: "\e608";
+}
+
+.icon-freebuf1:before {
+  content: "\e609";
+}
+
+.icon-soho:before {
+  content: "\e60a";
+}
+
+.icon-freebuf2:before {
+  content: "\e60b";
+}
+
+.icon-soho1:before {
+  content: "\e60c";
+}
+
+.icon-in:before {
+  content: "\e60d";
+}
+
+.icon-a-ycloudlogosingle:before {
+  content: "\e611";
+}
+
+.icon-CRMguanli:before {
+  content: "\e612";
+}
