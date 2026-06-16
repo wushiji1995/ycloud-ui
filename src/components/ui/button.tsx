@@ -1,6 +1,8 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { cloneElement, isValidElement, type ReactNode } from "react"
 
+import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -38,19 +40,78 @@ const buttonVariants = cva(
   }
 )
 
+type ButtonProps = ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & {
+    endIcon?: ReactNode
+    loading?: boolean
+    startIcon?: ReactNode
+  }
+
+function renderIcon(icon: ReactNode, position: "inline-start" | "inline-end") {
+  if (!icon) {
+    return null
+  }
+
+  if (isValidElement<{ "data-icon"?: string }>(icon)) {
+    return cloneElement(icon, {
+      "data-icon": position,
+    })
+  }
+
+  return <span data-icon={position}>{icon}</span>
+}
+
+function renderStartIcon(
+  startIcon: ReactNode,
+  endIcon: ReactNode,
+  loading: boolean
+) {
+  if (loading) {
+    if (endIcon && !startIcon) {
+      return null
+    }
+
+    return <Spinner data-icon="inline-start" />
+  }
+
+  return renderIcon(startIcon, "inline-start")
+}
+
+function renderEndIcon(
+  endIcon: ReactNode,
+  startIcon: ReactNode,
+  loading: boolean
+) {
+  if (loading && endIcon && !startIcon) {
+    return <Spinner data-icon="inline-end" />
+  }
+
+  return renderIcon(endIcon, "inline-end")
+}
+
 function Button({
   className,
+  children,
+  disabled,
+  endIcon,
+  loading = false,
+  startIcon,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
       {...props}
-    />
+    >
+      {renderStartIcon(startIcon, endIcon, loading)}
+      {children}
+      {renderEndIcon(endIcon, startIcon, loading)}
+    </ButtonPrimitive>
   )
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, type ButtonProps }
