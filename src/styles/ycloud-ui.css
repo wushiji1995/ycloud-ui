@@ -1,0 +1,45 @@
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1e22;
+  --primary: #16b364;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f6f8;
+  --secondary-foreground: #1a1e22;
+  --muted: #f4f6f8;
+  --muted-foreground: #697586;
+  --accent: #eef7f1;
+  --accent-foreground: #1a1e22;
+  --destructive: #d92d20;
+  --border: #d9d9d9;
+  --input: #d9d9d9;
+  --ring: #16b364;
+  --radius: 0.5rem;
+}

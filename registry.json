@@ -4,6 +4,21 @@
   "homepage": "https://github.com/wushiji1995/ycloud-ui",
   "items": [
     {
+      "name": "theme",
+      "type": "registry:style",
+      "title": "YCloud UI theme",
+      "description": "Shared Tailwind CSS 4 layers and YCloud UI design tokens without Tailwind preflight.",
+      "dependencies": ["tailwindcss"],
+      "devDependencies": ["@tailwindcss/postcss"],
+      "files": [
+        {
+          "path": "src/styles/ycloud-ui.css",
+          "type": "registry:style",
+          "target": "src/styles/ycloud-ui.css"
+        }
+      ]
+    },
+    {
       "name": "utils",
       "type": "registry:lib",
       "title": "YCloud utils",
@@ -23,7 +38,7 @@
       "title": "YCloud Button",
       "description": "YCloud button component based on Base UI and class-variance-authority.",
       "dependencies": ["@base-ui/react", "class-variance-authority"],
-      "registryDependencies": ["wushiji1995/ycloud-ui/utils"],
+      "registryDependencies": ["wushiji1995/ycloud-ui/theme", "wushiji1995/ycloud-ui/utils"],
       "files": [
         {
           "path": "src/components/ui/button.tsx",
