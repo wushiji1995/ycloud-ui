@@ -70,7 +70,7 @@
       "type": "registry:ui",
       "title": "YCloud OTP Field",
       "description": "A shadcn-style one-time password field built on the Base UI OTP Field primitive.",
-      "dependencies": ["@base-ui/react"],
+      "dependencies": ["@base-ui/react@^1.6.0"],
       "registryDependencies": [
         "wushiji1995/ycloud-ui/theme",
         "wushiji1995/ycloud-ui/utils"
