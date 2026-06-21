@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "otp-field",
+  "title": "YCloud OTP Field",
+  "description": "A shadcn-style one-time password field built on the Base UI OTP Field primitive.",
+  "dependencies": [
+    "@base-ui/react"
+  ],
+  "registryDependencies": [
+    "wushiji1995/ycloud-ui/theme",
+    "wushiji1995/ycloud-ui/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/otp-field.tsx",
+      "content": "import * as React from \"react\"\nimport { OTPField as OTPFieldPrimitive } from \"@base-ui/react/otp-field\"\nimport { Separator as SeparatorPrimitive } from \"@base-ui/react/separator\"\n\nimport { cn } from \"@/lib/utils\"\n\nfunction OtpField({\n  className,\n  ...props\n}: OTPFieldPrimitive.Root.Props) {\n  return (\n    <OTPFieldPrimitive.Root\n      data-slot=\"otp-field\"\n      className={cn(\n        \"flex items-center gap-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction OtpFieldGroup({\n  className,\n  ...props\n}: React.ComponentProps<\"div\">) {\n  return (\n    <div\n      data-slot=\"otp-field-group\"\n      className={cn(\"flex items-center gap-1\", className)}\n      {...props}\n    />\n  )\n}\n\nfunction OtpFieldInput({\n  className,\n  ...props\n}: OTPFieldPrimitive.Input.Props) {\n  return (\n    <OTPFieldPrimitive.Input\n      data-slot=\"otp-field-input\"\n      className={cn(\n        \"size-8 rounded-md border border-input bg-input/20 text-center text-sm font-medium tabular-nums transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40\",\n        className\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction OtpFieldSeparator({\n  className,\n  children = \"-\",\n  ...props\n}: SeparatorPrimitive.Props) {\n  return (\n    <SeparatorPrimitive\n      data-slot=\"otp-field-separator\"\n      className={cn(\"px-1 text-sm font-medium text-muted-foreground\", className)}\n      {...props}\n    >\n      {children}\n    </SeparatorPrimitive>\n  )\n}\n\nexport { OtpField, OtpFieldGroup, OtpFieldInput, OtpFieldSeparator }\n",
+      "type": "registry:ui",
+      "target": "src/components/ui/otp-field.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "title": "YCloud Spinner",
+  "description": "YCloud loading spinner for inline button and status indicators.",
+  "registryDependencies": [
+    "wushiji1995/ycloud-ui/utils"
+  ],
+  "files": [
+    {
+      "path": "src/components/ui/spinner.tsx",
+      "content": "import type { ComponentProps } from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nfunction Spinner({ className, ...props }: ComponentProps<\"svg\">) {\n  return (\n    <svg\n      data-slot=\"spinner\"\n      aria-hidden=\"true\"\n      viewBox=\"0 0 24 24\"\n      className={cn(\"animate-spin\", className)}\n      {...props}\n    >\n      <circle\n        cx=\"12\"\n        cy=\"12\"\n        r=\"10\"\n        fill=\"none\"\n        stroke=\"currentColor\"\n        strokeWidth=\"4\"\n        opacity=\"0.25\"\n      />\n      <path\n        fill=\"currentColor\"\n        d=\"M22 12a10 10 0 0 1-10 10v-4a6 6 0 0 0 6-6z\"\n      />\n    </svg>\n  )\n}\n\nexport { Spinner }\n",
+      "type": "registry:ui",
+      "target": "src/components/ui/spinner.tsx"
+    }
+  ],
+  "type": "registry:ui"
+}

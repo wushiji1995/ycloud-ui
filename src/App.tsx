@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useId, useState } from "react"
 import { Controller, useForm, useWatch } from "react-hook-form"
 import {
   Bar,
@@ -65,6 +65,12 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  OtpField,
+  OtpFieldGroup,
+  OtpFieldInput,
+  OtpFieldSeparator,
+} from "@/components/ui/otp-field"
 import {
   Popover,
   PopoverContent,
@@ -1346,6 +1352,67 @@ function FailedReasonShareCard() {
   )
 }
 
+function OtpFieldDemoCard() {
+  const id = useId()
+  const descriptionId = `${id}-description`
+
+  return (
+    <section className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+      <div className="grid gap-1.5">
+        <h2 className="text-base font-semibold">OTP Field</h2>
+        <p className="text-sm text-muted-foreground">
+          Verify sensitive actions with a short one-time code.
+        </p>
+      </div>
+
+      <div className="mt-5 grid gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="grid gap-2">
+            <Label htmlFor={id}>Verification code</Label>
+            <OtpField
+              id={id}
+              aria-label="Verification code"
+              aria-describedby={descriptionId}
+              defaultValue="123456"
+              length={6}
+            >
+              <OtpFieldGroup>
+                {Array.from({ length: 3 }, (_, index) => (
+                  <OtpFieldInput
+                    key={index}
+                    aria-label={
+                      index === 0 ? undefined : `Character ${index + 1} of 6`
+                    }
+                  />
+                ))}
+              </OtpFieldGroup>
+              <OtpFieldSeparator />
+              <OtpFieldGroup>
+                {Array.from({ length: 3 }, (_, index) => (
+                  <OtpFieldInput
+                    key={index + 3}
+                    aria-label={`Character ${index + 4} of 6`}
+                  />
+                ))}
+              </OtpFieldGroup>
+            </OtpField>
+          </div>
+
+          <div className="rounded-md bg-muted/40 px-3 py-2 text-right">
+            <div className="text-xs text-muted-foreground">Example format</div>
+            <div className="mt-1 font-mono text-sm font-semibold tabular-nums">
+              123-456
+            </div>
+          </div>
+        </div>
+        <p id={descriptionId} className="text-xs text-muted-foreground">
+          Codes can be pasted, typed, or autofilled from compatible devices.
+        </p>
+      </div>
+    </section>
+  )
+}
+
 function IconFontPreviewCard() {
   return (
     <section className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
@@ -1446,6 +1513,7 @@ export function App() {
         <DeliveriesSankeyCard />
         <ButtonClicksChartCard />
         <FailedReasonShareCard />
+        <OtpFieldDemoCard />
         <IconFontPreviewCard />
       </section>
     </main>

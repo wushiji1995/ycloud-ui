@@ -325,6 +325,24 @@ describe("App", () => {
     expect(ycloudIcon).toHaveClass("icon-a-ycloudlogosingle")
   })
 
+  it("renders a Base UI OTP field demo on the home page", () => {
+    renderApp()
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "OTP Field" })
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole("group", { name: "Verification code" })
+    ).toHaveAttribute(
+      "data-slot",
+      "otp-field"
+    )
+    expect(document.querySelector('[data-slot="otp-field-input"]')).toHaveClass(
+      "size-8"
+    )
+    expect(screen.getByText("123-456")).toBeInTheDocument()
+  })
+
   it("confirms before deleting an agent", () => {
     renderApp()
 
